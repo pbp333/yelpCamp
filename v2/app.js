@@ -1,81 +1,63 @@
 var express = require("express"),
 app = express(),
 bodyParser = require("body-parser"),
-mongoose = require("mongoose");
+mongoose = require("mongoose"),
+Campground = require("./models/campground.js"),
+seedDB = require("./seeds");
+
+seedDB();
+
+
 
 mongoose.connect("mongodb://localhost/yelpcamp");
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
-// SCHEMA SETUP
 
-var campgroundSchema = new mongoose.Schema({
-	name: String,
-	image: String,
-	description: String
+app.get("/", function (req, res) {
+	res.render("landing");
 });
 
-var Campground = mongoose.model("Campground", campgroundSchema);
+app.get("/campgrounds/new", function(req, res) {
+	res.render("new");
+});
 
-/*Campground.create(
-	{
-		name: "whatever1",
-		image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/aa/One_Piece_DVD_18.png/200px-One_Piece_DVD_18.png",
-		description: "whatever1 description"
-	}, function (err, newlyCreated) {
+app.get("/campgrounds", function (req, res) {
+	Campground.find({}, function (err, allCampgrounds) {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log("A new campground was created!");
-			console.log(newlyCreated);
+
+			res.render("index", {campgrounds: allCampgrounds});
 		}
-	}
-	);*/
-
-	app.get("/", function (req, res) {
-		res.render("landing");
 	});
+});
 
-	app.get("/campgrounds/new", function(req, res) {
-		res.render("new");
+app.post("/campgrounds", function (req, res) {
+	var name = req.body.name;
+	var image = req.body.image;
+	var description = req.body.description;
+	var campground = {name: name, image: image, description: description};
+	Campground.create(campground, function (err, newlyCreated) {
+		if (err) {
+			console.log(err);
+		} else {
+			res.redirect("/campgrounds");
+		}
 	});
+});
 
-	app.get("/campgrounds", function (req, res) {
-		Campground.find({}, function (err, allCampgrounds) {
-			if (err) {
-				console.log(err);
-			} else {
-
-				res.render("index", {campgrounds: allCampgrounds});
-			}
-		});
+app.get("/campgrounds/:id", function (req, res) {
+	Campground.findById(req.params.id).populate("comments").exec(function (err, campground) {
+		if (err) {
+			console.log(err);
+		} else {
+			res.render("show", {campground: campground});
+		}
 	});
-
-	app.post("/campgrounds", function (req, res) {
-		var name = req.body.name;
-		var image = req.body.image;
-		var description = req.body.description;
-		var campground = {name: name, image: image, description: description};
-		Campground.create(campground, function (err, newlyCreated) {
-			if (err) {
-				console.log(err);
-			} else {
-				res.redirect("/campgrounds");
-			}
-		});
-	});
-
-	app.get("/campgrounds/:id", function (req, res) {
-		Campground.findById(req.params.id, function (err, campground) {
-			if (err) {
-				console.log(err);
-			} else {
-				res.render("show", {campground: campground});
-			}
-		});
-	});
+});
 
 
-	app.listen(8080, function() {
-		console.log("Yelp Camp server has started...")
-	});
+app.listen(8080, function() {
+	console.log("Yelp Camp server has started...")
+});
