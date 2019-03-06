@@ -1,9 +1,9 @@
 var express = require("express"),
-	Campground = require("../models/campground");
+Campground = require("../models/campground");
 
 var router = express.Router();
 
-router.get("/new", function(req, res) {
+router.get("/new", isLoggedIn,function(req, res) {
 	res.render("campgrounds/new");
 });
 
@@ -19,15 +19,20 @@ router.get("", function (req, res) {
 	});
 });
 
-router.post("/", function (req, res) {
+router.post("/", isLoggedIn, function (req, res) {
 	var name = req.body.name;
 	var image = req.body.image;
 	var description = req.body.description;
-	var campground = {name: name, image: image, description: description};
+	var author = {
+		username: req.user.username,
+		id: req.user._id
+	}
+	var campground = {name: name, image: image, description: description, author: author};
 	Campground.create(campground, function (err, newlyCreated) {
 		if (err) {
 			console.log(err);
 		} else {
+			newlyCreated.save();
 			res.redirect("/campgrounds");
 		}
 	});
