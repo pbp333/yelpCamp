@@ -11,7 +11,7 @@ User = require("./models/user");
 
 var commentRoutes = require("./routes/comments"),
 	campgroundRoutes = require("./routes/campgrounds"),
-	indexRoutes = require("./routes/index")
+	indexRoutes = require("./routes/index");
 
 seedDB();
 
@@ -40,9 +40,9 @@ app.use(function(req, res, next) {
 	next();
 })
 
-app.use(indexRoutes);
-app.use(campgroundRoutes);
-app.use(commentRoutes);
+app.use("/", indexRoutes);
+app.use("/campgrounds", campgroundRoutes);
+app.use("/campgrounds/:id/comments", commentRoutes);
 
 
 app.listen(8080, function() {
