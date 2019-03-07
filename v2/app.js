@@ -3,6 +3,7 @@ app = express(),
 bodyParser = require("body-parser"),
 mongoose = require("mongoose"),
 passport = require("passport"),
+methodOverride = require("method-override"),
 LocalStrategy = require("passport-local"),
 Campground = require("./models/campground"),
 Comment = require("./models/comment")
@@ -10,8 +11,8 @@ seedDB = require("./seeds"),
 User = require("./models/user");
 
 var commentRoutes = require("./routes/comments"),
-	campgroundRoutes = require("./routes/campgrounds"),
-	indexRoutes = require("./routes/index");
+campgroundRoutes = require("./routes/campgrounds"),
+indexRoutes = require("./routes/index");
 
 // seedDB();
 
@@ -35,6 +36,7 @@ mongoose.connect("mongodb://localhost/yelpcamp");
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 app.use(function(req, res, next) {
 	res.locals.currentUser = req.user;
 	next();
