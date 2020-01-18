@@ -8,14 +8,14 @@ LocalStrategy = require("passport-local"),
 Campground = require("./models/campground"),
 Comment = require("./models/comment")
 seedDB = require("./seeds"),
-User = require("./models/user");
+User = require("./models/user")
+flash = require("connect-flash");
 
 var commentRoutes = require("./routes/comments"),
 campgroundRoutes = require("./routes/campgrounds"),
 indexRoutes = require("./routes/index");
 
-// seedDB();
-
+app.use(flash());
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
 	secret: "Whatevergeufen2ie93ue3j3jr",
@@ -39,6 +39,8 @@ app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(function(req, res, next) {
 	res.locals.currentUser = req.user;
+	res.locals.errorMessage = req.flash("error");
+	res.locals.successMessage = req.flash("success");
 	next();
 })
 
