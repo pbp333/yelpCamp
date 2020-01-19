@@ -30,11 +30,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
-
-// localhost connection: "mongodb://localhost/yelpcamp";
-// mongoDB Atlas connection: "mongodb+srv://yelpUser:yelpUser333@cluster0-zuasm.mongodb.net/test?retryWrites=true&w=majority";
-
 mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true, useUnifiedTopology: true });
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
