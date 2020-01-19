@@ -32,8 +32,8 @@ passport.deserializeUser(User.deserializeUser());
 
 
 
-// mongoose.connect("mongodb://localhost/yelpcamp", { useNewUrlParser: true , useUnifiedTopology: true });
-// mongoose.connect("mongodb+srv://yelpUser:yelpUser333@cluster0-zuasm.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+// localhost connection: "mongodb://localhost/yelpcamp";
+// mongoDB Atlas connection: "mongodb+srv://yelpUser:yelpUser333@cluster0-zuasm.mongodb.net/test?retryWrites=true&w=majority";
 
 mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true, useUnifiedTopology: true });
 app.set("view engine", "ejs");
@@ -57,8 +57,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, host, function() {
   console.log("Yelp Camp server has started...")
 });
-
-
-/* app.listen(8080, function() {
-	console.log("Yelp Camp server has started...")
-}); */
