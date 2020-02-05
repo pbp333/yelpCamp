@@ -93,29 +93,11 @@ router.put("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 			// return res.redirect("back");
 		}
 
-		var lat = data ? data[0].latitude : 0;
-		var lng = data ? data[0].longitude : 0;
-		var location = data ? data[0].formattedAddress : "";
+		req.body.campground.lat = data ? data[0].latitude : 0;
+		req.body.campground.lng = data ? data[0].longitude : 0;
+		req.body.campground.location = data ? data[0].formattedAddress : "";
 
-		var author = {
-			username: req.user.username,
-			id: req.user._id
-		}
-
-		var campgroundToUpdate = {
-			name: req.body.campground.name, 
-			price: req.body.campground.price, 
-			image: req.body.campground.image, 
-			description: req.body.campground.description, 
-			author: author, 
-			location: location, 
-			lat: lat, 
-			lng: lng
-		};
-
-		console.log(campgroundToUpdate);
-
-		Campground.findByIdAndUpdate(req.params.id, campgroundToUpdate, function (err, updatedCampground) {
+		Campground.findByIdAndUpdate(req.params.id, req.body.campground, function (err, updatedCampground) {
 			if (err) {
 				console.log(err);
 				res.redirect("campgrounds");
