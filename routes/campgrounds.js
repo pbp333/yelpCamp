@@ -53,8 +53,6 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
 
 		var campground = {name: name, price: price, image: image, description: description, author: author, location: location, lat: lat, lng: lng};
 
-		console.log(campground);
-
 		Campground.create(campground, function (err, newlyCreated) {
 			if (err) {
 				console.log(err);
