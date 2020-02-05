@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 var express = require("express"),
 app = express(),
 bodyParser = require("body-parser"),
@@ -49,6 +51,6 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 const host = process.env.IP;
 const port = process.env.PORT || 3000;
 
-app.listen(port, host, function() {
+app.listen(8080, host, function() {
   console.log("Yelp Camp server has started...")
 });
