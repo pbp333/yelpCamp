@@ -13,6 +13,8 @@ seedDB = require("./seeds"),
 User = require("./models/user")
 flash = require("connect-flash");
 
+app.locals.moment = require("moment");
+
 var commentRoutes = require("./routes/comments"),
 campgroundRoutes = require("./routes/campgrounds"),
 indexRoutes = require("./routes/index");
