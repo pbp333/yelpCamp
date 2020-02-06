@@ -19,15 +19,30 @@ router.get("/new", middleware.isLoggedIn,function(req, res) {
 });
 
 
-router.get("", function (req, res) {
-	Campground.find({}, function (err, allCampgrounds) {
-		if (err) {
-			console.log(err);
-		} else {
-			
-			res.render("campgrounds/index", {campgrounds: allCampgrounds, page: 'campgrounds'});
-		}
-	});
+router.get("/", function (req, res) {
+
+	if (req.query.search) {
+		const searchText = new RegExp(escapeRegex(req.query.search), "gi");
+		Campground.find({ name: searchText }, function (err, allCampgrounds) {
+			if (err) {
+				console.log(err);
+			} else {
+				
+				res.render("campgrounds/index", {campgrounds: allCampgrounds, page: 'campgrounds'});
+			}
+		});
+
+	} else {
+		
+		Campground.find({}, function (err, allCampgrounds) {
+			if (err) {
+				console.log(err);
+			} else {
+				
+				res.render("campgrounds/index", {campgrounds: allCampgrounds, page: 'campgrounds'});
+			}
+		});
+	}
 });
 
 router.post("/", middleware.isLoggedIn, function (req, res) {
@@ -119,5 +134,9 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 
 	res.redirect("campgrounds");	
 });
+
+function escapeRegex(text) {
+	return text.replace(/[-[\]{}()*+?.,\\|#\s]/g, "\\$&");
+}
 
 module.exports = router;
