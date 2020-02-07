@@ -29,7 +29,7 @@ app.use(require("express-session")({
 }));
 
 // clears DB
-// seedDB();
+seedDB();
 
 app.use(passport.initialize());
 app.use(passport.session());
