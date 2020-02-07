@@ -89,7 +89,7 @@ router.post("/", middleware.isLoggedIn, upload.single("image"), function (req, r
 			id: req.user._id
 		}
 
-		geocoder.geocode(req.body.location, function (err, data) {
+		geocoder.geocode(req.body.location, async function (err, data) {
 			if (err || !data.length) {
 				console.log(err);
 				req.flash("error", "Invalid address");
@@ -100,16 +100,31 @@ router.post("/", middleware.isLoggedIn, upload.single("image"), function (req, r
 			var lng = data ? data[0].longitude : 0;
 			var location = data ? data[0].formattedAddress : "";
 
-			var campground = {name: name, price: price, image: image, description: description, author: author, location: location, lat: lat, lng: lng};
+			var newCampground = {name: name, price: price, image: image, description: description, author: author, location: location, lat: lat, lng: lng};
 
-			Campground.create(campground, function (err, newlyCreated) {
-				if (err) {
-					console.log(err);
-				} else {
-					newlyCreated.save();
-					res.redirect("/campgrounds");
+			try {
+
+				let campground = await Campground.create(newCampground);
+				let user = await User.findById(req.user._id).populate("followers").exec();
+
+				let notification = {
+					user: user,
+					campground: campground,
+					content: "Created Campground"
+				};
+
+				for (const follower of user.followers) {
+					let createdNotification = await Notification.create(notification);
+					follower.notifications.push(createdNotification);
+					follower.save();
 				}
-			});
+
+				res.redirect("/campgrounds");
+			} catch (err) {
+				req.flash("error", err.message);
+				return res.redirect("back");
+			}
+
 		});
 	});
 });

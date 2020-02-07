@@ -1,6 +1,8 @@
 var express = require("express"),
 User = require("../models/user"),
-Campground = require("../models/campground")
+Campground = require("../models/campground"),
+Notification = require("../models/notification"),
+middleware = require("../middleware"),
 async = require("async"),
 nodemailer = require("nodemailer"),
 crypto = require("crypto"),
@@ -66,25 +68,72 @@ router.get("/logout", function(req, res) {
 
 // USER PROFILE
 
-router.get("/users/:id", function (req, res) {
-	User.findById(req.params.id, function (err, user) {
-		if (err || !user) {
-			console.log(err);
-			req.flash("error", "User not found");
-			res.redirect("back");
-		}
+router.get("/users/:id", async function (req, res) {
 
-		Campground.find().where("author.id").equals(user._id).exec(function (err, campgrounds) {
-			if (err || !campgrounds) {
-				console.log(err);
-				req.flash("error", "User not found");
-				res.redirect("back");
-			}
-			console.log(campgrounds);
-			user.campgrounds = campgrounds;
-			res.render("users/view", { user: user });
-		});
-	});
+	try {
+
+		let user = await User.findById(req.params.id).populate("followers").exec();
+		let campgrounds = await Campground.find().where("author.id").equals(user._id).exec();
+
+		user.campgrounds = campgrounds;
+		res.render("users/view", { user: user });
+
+	} catch (err) {
+		console.log(err);
+		req.flash("error", "User not found");
+		res.redirect("back");
+	}
+});
+
+// FOLLOW USER
+
+router.post("/follow/:id", middleware.isLoggedIn, async function(req, res) {
+	try {
+		let user = await User.findById(req.params.id);
+		user.followers.push(req.user._id);
+		user.saver();
+		req.flash("success", "Succefully followed " + user.username + "!");
+		res.redirect("/users/" + req.params.id);
+	} catch (err) {
+		console.log(err);
+		req.flash("error", "Could not follow user");
+		res.redirect("back");
+	}
+});
+
+// VIEW ALL NOTIFICATIONS
+
+router.get("/notifications/:id", middleware.isLoggedIn, async function(req, res) {
+	try {
+		let user = await User.findById(req.params.id).populate({
+			path: "notifications",
+			options: { sort: {"_id": -1 } }
+
+		}).exec();
+		let allNotifications = user.notifications;
+		res.render("notifications/index", { allNotifications });
+
+	} catch (err) {
+		console.log(err);
+		req.flash("error", "Problem getting notifications");
+		res.redirect("back");
+	}
+});
+
+// HANDEL NOTIFICATION
+
+router.get("/notifcations/:id", middleware.isLoggedIn, async function(req, res) {
+	try {
+		let notifcation = await Notification.findById(req.params.id);
+		notification.isRead = true;
+		notification.save();
+		res.redirect("/campgrounds/" + notification.campgroundId);
+
+	} catch (err) {
+		console.log(err);
+		req.flash("error", "Problem getting notification");
+		res.redirect("back");
+	}
 });
 
 // PASSWORD RECOVERY

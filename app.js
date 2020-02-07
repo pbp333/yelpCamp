@@ -37,13 +37,24 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true });
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
-app.use(function(req, res, next) {
+
+app.use(async function(req, res, next) {
 	res.locals.currentUser = req.user;
+
+	if (req.user) {
+		try {
+			let user = await User.findById(req.user._id).populate("notifications", null, { isRead: false }).exec();
+			res.locals.notifications = user.notifications.reverse();
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 	res.locals.errorMessage = req.flash("error");
 	res.locals.successMessage = req.flash("success");
 	next();
@@ -57,5 +68,5 @@ const host = process.env.IP;
 const port = process.env.PORT || 3000;
 
 app.listen(process.env.PORT, host, function() {
-  console.log("Yelp Camp server has started...")
+	console.log("Yelp Camp server has started...")
 });

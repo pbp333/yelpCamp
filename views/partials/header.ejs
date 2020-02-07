@@ -21,6 +21,17 @@
 				<li class="nav-item <%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>"><a href="/login" class="nav-link">Login</a></li>
 				<li class="nav-item <%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>"><a href="/register" class="nav-link">Sign Up</a></li>
 				<% } else {%>
+				<div class="dropdown">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Notifications <span class="badge badge-light"><%= notifications.length%>
+					</button>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item" href="/notifications/<%= currentUser.id %>">View Past Notifications</a>
+						<% notifications.forEach(function(notification) {%>
+						<a class="dropdown-item" href="/notifications/<%= notification.id %>"><%= notification.user.username - notification.content%></a>
+						<% }); %>
+					</div>
+				</div>
 				<li><a href="#" class="nav-link">Signed in as <%= currentUser.username %></a></li>
 				<li><a href="/logout" class="nav-link">Logout</a></li>
 				<% } %>
