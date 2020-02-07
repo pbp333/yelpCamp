@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Campground = require("./models/campground.js");
 var Comment = require("./models/comment.js");
+var User = require("./models/user.js");
 
 var data = [
 {
@@ -20,48 +21,21 @@ var data = [
 }
 ];
 
-function seedDB() {
+async function seedDB() {
 
-	// remove all of campgrounds
-	Campground.remove({}, function(err) {
-		/*if (err) {
-			console.log(err);
-		} else {
-			console.log("Removed Campgrounds");
-			Comment.remove({}, function(err) {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("Removed Comments");
-					// add a few campgrounds
-					data.forEach(function(seed) {
-						Campground.create(seed, function(err, data) {
-							if(err) {
-								console.log(err);
-							} else {
-								console.log("added campground");
-								// create comment
-								Comment.create({
-									text: "whatever comment 1",
-									author: "whoever"
-								}, function(err, comment) {
-									if (err) {
-										console.log(err);
-									} else {
-										data.comments.push(comment);
-										data.save();
-										console.log("Created new comment");
-									}
-								});
-							}
-						});
-					})
-				}
-			});
-		}*/
-	});
+	try {
 
+	await Comment.remove({});
+
+	await Campground.remove({});
+
+	await User.remove({});
 	
+	} catch (err) {
+		console.log(err);
+	}
+
+
 };
 
 module.exports = seedDB;

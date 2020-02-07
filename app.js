@@ -28,6 +28,9 @@ app.use(require("express-session")({
 	saveUninitialized: false
 }));
 
+// clears DB
+// seedDB();
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
