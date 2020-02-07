@@ -1,35 +1,15 @@
 <% include partials/header%>
-<h1 style="text-align:center">Sign Up</h1>
-<div style="width: 30%; margin: 25px auto;">
-	<form action="/register" method="post">
-		<div class="form-group">
-			<label for="name">Username</label>
-			<input class="form-control" type="text" name="username" placeholder="Username">
-		</div>
-		<div class="form-group">
-			<label for="name">Password</label>
-			<input class="form-control" type="password" name="password" placeholder="Password">
-		</div>
-		<div class="form-group">
-			<label for="name">First Name</label>
-			<input class="form-control" type="text" name="firstName" placeholder="First Name">
-		</div>
-		<div class="form-group">
-			<label for="name">Last Name</label>
-			<input class="form-control" type="text" name="lastName" placeholder="Last Name">
-		</div>
-		<div class="form-group">
-			<label for="name">Email</label>
-			<input class="form-control" type="text" name="email" placeholder="Email">
-		</div>
-		<div class="form-group">
-			<label for="name">Avatar</label>
-			<input class="form-control" type="text" name="avatar" placeholder="avatar url">
-		</div>
-		<div class="form-group">
-			<button class="btn btn-lg btn-primary btn-block">Submit</button>
-		</div>
-	</form>
+<div class="col-md-12">
+	<form class="form-signin" action="/register" method="post">
+			<h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
+			<input class="form-control" type="text" name="firstName" required placeholder="First Name">
+			<input class="form-control" type="text" name="lastName" required placeholder="Last Name">
+			<input class="form-control" type="text" name="email" placeholder="joe@doe.com" required> 
+			<input class="form-control" type="text" name="avatar" placeholder="avatar url" required>
+			<input class="form-control" type="text" name="username" required placeholder="Username">
+			<input class="form-control" type="password" name="password" required placeholder="Password">
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+		</form>
 </div>
 
 <% include partials/footer%>
